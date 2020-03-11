@@ -23,6 +23,7 @@ public class Login : MonoBehaviour
     private IEnumerator TryLogin()
     {
         yield return Helper.InitializeToken(emailInputField.text, passwordInputField.text);
+        yield return Helper.UpdateLastLogin();
         yield return Helper.GetPlayerInfo();
         //yield return Helper.NewPlayerOnline();
         messageBoardText.text += "\nWelcome " + player.Id + ". You are logged in!";

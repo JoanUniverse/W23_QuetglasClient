@@ -90,32 +90,29 @@ public class Helper : MonoBehaviour
             player.Name = playerSerializable.Name;
             player.Email = playerSerializable.Email;
             player.BirthDay = DateTime.Parse(playerSerializable.BirthDay);
+            player.LastLogin = DateTime.Parse(playerSerializable.LastLogin);
         }
 
         httpClient.Dispose();
     }
 
-    internal static IEnumerator NewPlayerOnline()
+    internal static IEnumerator UpdateLastLogin()
     {
         Player player = FindObjectOfType<Player>();
-        UnityWebRequest httpClient = new UnityWebRequest(player.HttpServerAddress + "api/Player/NewPlayerOnline", "POST");
 
-        string jsonData = JsonUtility.ToJson(player);
-        byte[] dataToSend = Encoding.UTF8.GetBytes(jsonData);
-        httpClient.uploadHandler = new UploadHandlerRaw(dataToSend);
-        httpClient.SetRequestHeader("Content-Type", "application/json");
-        httpClient.SetRequestHeader("Authorization", "bearer " + player.Token);
-
-        httpClient.certificateHandler = new BypassCertificate();
-
-        yield return httpClient.SendWebRequest();
-
-        if (httpClient.isNetworkError || httpClient.isHttpError)
+        using (UnityWebRequest httpClient = new UnityWebRequest(player.HttpServerAddress + "api/Player/UpdateLastLogin", "POST"))
         {
-            throw new Exception("OnNewPlayerOnline: Error > " + httpClient.error);
-        }
+            httpClient.downloadHandler = new DownloadHandlerBuffer();
+            httpClient.SetRequestHeader("Content-type", "application/json");
+            httpClient.SetRequestHeader("Authorization", "bearer " + player.Token);
+            httpClient.certificateHandler = new BypassCertificate();
+            yield return httpClient.SendWebRequest();
 
-        httpClient.Dispose();
+            if (httpClient.isNetworkError || httpClient.isHttpError)
+            {
+                throw new Exception("UpdateLastLogin > UpdateLastLogin: " + httpClient.error);
+            }
+            Debug.Log("Works");
+        }
     }
-    
 }

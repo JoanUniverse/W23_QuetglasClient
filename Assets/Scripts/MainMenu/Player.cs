@@ -47,6 +47,15 @@ public class Player : MonoBehaviour
         set { _email = value; }
     }
 
+    private DateTime _lastLogin;
+
+    public DateTime LastLogin
+    {
+        get { return _lastLogin; }
+        set { _lastLogin = value; }
+    }
+
+
     private void Awake()
     {
         var gameManagers = FindObjectsOfType<Player>();
